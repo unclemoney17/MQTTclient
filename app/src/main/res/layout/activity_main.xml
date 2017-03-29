@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:text="SPEAKER"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:id="@+id/start"
+        android:layout_weight="1"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="按住录音，上移取消"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/notice"
+        android:layout_weight="1"
+        android:layout_marginBottom="20dp"
+        android:layout_above="@+id/start"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="Player"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2"
+        android:layout_above="@+id/player"
+        android:layout_alignLeft="@+id/player"
+        android:layout_alignStart="@+id/player"
+        android:layout_marginLeft="23dp"
+        android:layout_marginStart="23dp" />
+
+    <ToggleButton
+        android:text="PLAYER"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="34dp"
+        android:id="@+id/player"
+        tools:text="PLAYER"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/start"
+        android:layout_alignStart="@+id/start" />
+
+</RelativeLayout>
