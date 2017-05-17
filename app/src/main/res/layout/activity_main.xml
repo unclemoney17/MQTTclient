@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <Button
-        android:text="SPEAKER"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:id="@+id/start"
-        android:layout_weight="1"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+    android:id = "@+id/main"
+    android:layout_height="match_parent"
+    >
 
     <TextView
         android:text="按住录音，上移取消"
@@ -23,26 +17,67 @@
         android:layout_above="@+id/start"
         android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:text="Player"
+
+    <Button
+        android:text="SPEAKER"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:id="@+id/start"
+        android:layout_weight="1"
+        android:layout_above="@+id/progress"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="19dp" />
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:srcCompat="@mipmap/ic_launcher"
+        android:layout_above="@+id/notice"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/album" />
+
+    <SeekBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView2"
+        android:layout_marginBottom="26dp"
+        android:id="@+id/progress"
+        style="@android:style/Widget.SeekBar"
         android:layout_above="@+id/player"
-        android:layout_alignLeft="@+id/player"
-        android:layout_alignStart="@+id/player"
-        android:layout_marginLeft="23dp"
-        android:layout_marginStart="23dp" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/songtime"
+        android:layout_toStartOf="@+id/songtime" />
+
+    <TextView
+        android:text="连接状态："
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/player"
+        android:id="@+id/connect"
+        android:layout_width="match_parent" />
 
     <ToggleButton
         android:text="PLAYER"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="34dp"
+        android:layout_marginBottom="24dp"
         android:id="@+id/player"
         tools:text="PLAYER"
+        android:checked="false"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/start"
         android:layout_alignStart="@+id/start" />
+
+    <TextView
+        android:text="00:00"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/songtime"
+        android:layout_alignBottom="@+id/progress"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp" />
 
 </RelativeLayout>

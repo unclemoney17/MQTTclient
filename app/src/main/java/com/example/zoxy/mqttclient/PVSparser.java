@@ -21,8 +21,8 @@ public class PVSparser {
         try{
             header.put("namespace", "Alerts");
             header.put("name", "AlertsState");
-            payload.put("allAlerts","");
-            payload.put("activeAlerts","");
+            payload.put("allAlerts",null);
+            payload.put("activeAlerts",null);
             alerts.put("header",header);
             alerts.put("payload",payload);
         }catch(Exception e){
@@ -38,8 +38,8 @@ public class PVSparser {
         try{
             header.put("namespace", "AudioPlayer");
             header.put("name", "PlaybackState");
-            payload.put("offsetInMilliseconds","long");
-            payload.put("playerActivity","string");
+            payload.put("offsetInMilliseconds",Globals.playProgress);
+            payload.put("playerActivity",Globals.playState);
             PlaybackState.put("header",header);
             PlaybackState.put("payload",payload);
         }catch(Exception e){
@@ -48,17 +48,16 @@ public class PVSparser {
         return PlaybackState;
     }
 
-    public JSONObject getVolumeState(Context mContext){
+    public JSONObject getVolumeState(){
         JSONObject PlaybackState = new JSONObject();
         JSONObject header = new JSONObject();
         JSONObject payload = new JSONObject();
-        AudioManager mAudioMangager = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
 
         try{
             header.put("namespace", "Speaker");
             header.put("name", "VolumeState");
-            payload.put("volume",String.valueOf(mAudioMangager.getStreamVolume(AudioManager.STREAM_MUSIC)));
-            payload.put("muted",String.valueOf(mAudioMangager.getStreamVolume(AudioManager.STREAM_MUSIC) == 0));
+            payload.put("volume",Globals.volume);
+            payload.put("muted",Globals.volume == 0);
             PlaybackState.put("header",header);
             PlaybackState.put("payload",payload);
         }catch(Exception e){
@@ -67,16 +66,15 @@ public class PVSparser {
         return PlaybackState;
     }
 
-    public JSONObject getSpeechState(Context mContext){
+    public JSONObject getSpeechState(){
         JSONObject PlaybackState = new JSONObject();
         JSONObject header = new JSONObject();
         JSONObject payload = new JSONObject();
-        AudioManager mAudioMangager = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
         try{
             header.put("namespace", "SpeechSynthesizer");
             header.put("name", "SpeechState");
-            payload.put("offsetInMilliseconds","long");
-            payload.put("playerActivity",String.valueOf(mAudioMangager.isMusicActive()));
+            payload.put("offsetInMilliseconds", 0);
+            payload.put("playerActivity",Globals.TTSplayState);
             PlaybackState.put("header",header);
             PlaybackState.put("payload",payload);
         }catch(Exception e){
@@ -85,29 +83,29 @@ public class PVSparser {
         return PlaybackState;
     }
 
-    public JSONArray getContext(Context mContext){
+    public JSONArray getContext(){
         JSONArray context = new JSONArray();
         try{
             context.put(0,getAlertsState());
             context.put(1,getPlaybackState());
-            context.put(2,getVolumeState(mContext));
-            context.put(3,getSpeechState(mContext));
+            context.put(2,getVolumeState());
+            context.put(3,getSpeechState());
         }catch(Exception e){
             e.printStackTrace();
         }
         return context;
     }
 
-    public JSONObject getSpeechRecognizerEvent(String name, String namespace, Map<String,String> params){
+    public JSONObject getSpeechRecognizerEvent(String name){
 
         JSONObject event = new JSONObject();
         JSONObject header = new JSONObject();
         JSONObject payload = new JSONObject();
         try{
-            header.put("namespace", namespace);
+            header.put("namespace", "SpeechRecognizer");
             header.put("name", name);
-            header.put("messageId", params.get("messageID"));
-            header.put("dialogRequestId", params.get("dialogRequestID"));
+            header.put("messageId", Globals.clientID + System.currentTimeMillis());
+            header.put("dialogRequestId",Globals.clientID + System.currentTimeMillis() );
             if(name.equalsIgnoreCase("Recognize")){
                 payload.put("profile", "CLOSE_TALK");
                 payload.put("format", "AUDIO_L16_RATE_16000_CHANNELS_1");
@@ -129,22 +127,22 @@ public class PVSparser {
         return getNopayloadEvent(name,namespace,params);
     }
 
-    public JSONObject getAudioPlayerEvent(String name, String namespace, Map<String,String> params) {
+    public JSONObject getAudioPlayerEvent(String name, Map<String,String> params) {
 
         JSONObject event = new JSONObject();
         JSONObject header = new JSONObject();
         JSONObject payload = new JSONObject();
         try {
-            header.put("namespace", namespace);
+            header.put("namespace", "AudioPlayer");
             header.put("name", name);
-            header.put("messageId", params.get("messageID"));
+            header.put("messageId", Globals.clientID + System.currentTimeMillis());
             if (name.equalsIgnoreCase("PlaybackFailed")) {
-                payload.put("currentPlaybackState", new JSONObject().put("offsetInMilliseconds", params.get("offsetInMilliseconds")).put("playerActivity", params.get("playerActivity")));
+                payload.put("currentPlaybackState", new JSONObject().put("offsetInMilliseconds", Globals.playProgress).put("playerActivity", Globals.playState));
                 payload.put("error", new JSONObject().put("type", params.get("errortype")).put("message", params.get("message")));
             } else if (name.equalsIgnoreCase("PlaybackQueueCleared")) {
 
             } else {
-                payload.put("offsetInMilliseconds", params.get("offsetInMilliseconds"));
+                payload.put("offsetInMilliseconds", Globals.playProgress);
             }
             event.put("header", header);
             event.put("payload", payload);
@@ -159,17 +157,17 @@ public class PVSparser {
         return getNopayloadEvent(name,namespace,params);
     }
 
-    public JSONObject getSpeakerVolumeEvent(String name, String namespace, Map<String,String> params){
+    public JSONObject getSpeakerVolumeEvent(String name,Map<String,String> params){
 
         JSONObject event = new JSONObject();
         JSONObject header = new JSONObject();
         JSONObject payload = new JSONObject();
         try{
-            header.put("namespace", namespace);
+            header.put("namespace", "SpeakerVolume");
             header.put("name", name);
-            header.put("messageId", params.get("messageID"));
-            payload.put("volume",params.get("volume"));
-            payload.put("muted",params.get("muted"));
+            header.put("messageId", Globals.clientID+System.currentTimeMillis());
+            payload.put("volume",Globals.volume);
+            payload.put("muted",Globals.volume == 0);
             event.put("header",header);
             event.put("payload",payload);
         }catch(Exception e){
@@ -232,7 +230,7 @@ public class PVSparser {
         try{
             header.put("namespace", namespace);
             header.put("name", name);
-            header.put("messageId", params.get("messageID"));
+            header.put("messageId", Globals.clientID+System.currentTimeMillis());
             event.put("header",header);
             event.put("payload",payload);
         }catch(Exception e){
@@ -244,17 +242,17 @@ public class PVSparser {
 
     public JSONObject getEvent(String name, String namespace, Map<String,String> params){
         if(namespace.equalsIgnoreCase("SpeechRecognizer")){
-            return getSpeechRecognizerEvent(name, namespace, params);
+            return getSpeechRecognizerEvent(name);
         }else if(namespace.equalsIgnoreCase("SpeechSynthesizer")){
             return getSpeechSynthesizerEvent(name, namespace, params);
         }else if(namespace.equalsIgnoreCase("Timers")){
             return getTimersEvent(name, namespace, params);
         }else if(namespace.equalsIgnoreCase("AudioPlayer")){
-            return getAudioPlayerEvent(name, namespace, params);
+            return getAudioPlayerEvent(name,  params);
         }else if(namespace.equalsIgnoreCase("PlaybackController")){
             return getPlaybackControllerEvent(name, namespace, params);
         }else if(namespace.equalsIgnoreCase("SpeakerVolume")){
-            return getSpeakerVolumeEvent(name, namespace, params);
+            return getSpeakerVolumeEvent(name,  params);
         }else if(namespace.equalsIgnoreCase("Settings")){
             return getSettingsEvent(name, namespace, params);
         }else if(namespace.equalsIgnoreCase("System")){
@@ -264,6 +262,15 @@ public class PVSparser {
         }
     }
 
-
-
+    public JSONObject getPVS(String name , String namespace, Map<String,String> params) {
+        JSONObject PVS = new JSONObject();
+        try {
+            PVS.put("context", getContext());
+            PVS.put("event",getEvent(name,namespace,params));
+            return PVS;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
